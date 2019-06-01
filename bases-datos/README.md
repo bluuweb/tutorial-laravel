@@ -150,3 +150,53 @@ En la vista podemos realizar un ciclo foreach para pintar nuestros datos:
     </tbody>
 </table>
 ```
+
+## Leer un dato
+Para traer la información de un solo dato de nuestra base de datos, debemos realizar lo siguiente:
+
+1. Agregar un boton o enlace para que el cliente seleccione el detalle de un solo campo:
+```html
+<tbody>
+    @foreach ($notas as $item)
+    <tr>
+        <th scope="row">{{ $item->id }}</th>
+        <td>
+            <a href="{{route('notas.detalle', $item)}}">
+                {{ $item->nombre }}
+            </a>
+        </td>
+        <td>{{ $item->descripcion }}</td>
+        <td>@mdo</td>
+    </tr>
+    @endforeach
+</tbody>
+```
+
+2. Crear la ruta `notas.detalle` en `routes/web.php` con su respectivo controlador, recuerda que estamos pasando el id en forma de parámetro, por lo tanto nuestro controlador debería recibirlo:
+``` php
+Route::get('/{id}', 'PagesController@detalle')->name('notas.detalle');
+```
+
+3. Crear función en controlador:
+```php
+public function detalle($id){
+        
+    // $nota = App\Nota::find($id);
+
+    //Aquí valida si existe sino redirije al 404
+    $nota = App\Nota::findOrFail($id);
+
+    return view('notas.detalle', compact('nota'));
+}
+```
+
+4. Crear la vista detalle, en este ejemplo se creó en `views/notas/detalle.blade.php`:
+``` html
+@section('seccion')
+    <h1>Nota Detalle</h1>
+    <hr>
+    <h4>Id: {{ $nota->id }}</h4>
+    <h4>Nombre: {{ $nota->nombre }}</h4>
+    <h4>Descripción: {{ $nota->descripcion }}</h4>
+@endsection
+```
