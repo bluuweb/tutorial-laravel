@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Laravel',
   description: 'Aprende a utilizar Laravel en tus proyectos web',
-  base: '/laravel',
+  base: '/tutorial-laravel',
   locales:{
     '/':{
       lang: 'es-ES'
