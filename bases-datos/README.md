@@ -152,6 +152,10 @@ En la vista podemos realizar un ciclo foreach para pintar nuestros datos:
 ```
 
 ## Leer un dato
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=z7ecV0tL1Gg
+" target="_blank"><img src="http://img.youtube.com/vi/z7ecV0tL1Gg/0.jpg" 
+alt="Tutorrial bluuweb" width="240" height="180" border="" /></a>
+
 Para traer la información de un solo dato de nuestra base de datos, debemos realizar lo siguiente:
 
 1. Agregar un boton o enlace para que el cliente seleccione el detalle de un solo campo:
@@ -173,8 +177,13 @@ Para traer la información de un solo dato de nuestra base de datos, debemos rea
 ```
 
 2. Crear la ruta `notas.detalle` en `routes/web.php` con su respectivo controlador, recuerda que estamos pasando el id en forma de parámetro, por lo tanto nuestro controlador debería recibirlo:
+
+::: danger MODIFICACIÓN QUE NO VERÁS EN EL VIDEO
+Agregué la siguiente ruta: `/detalle/{id}` esto es para que no se destruya nuestras otras vistas, en el video #10 del curso se explica esta modificación, pero recomiendo utilizarla desde ya!
+:::
+
 ``` php
-Route::get('/{id}', 'PagesController@detalle')->name('notas.detalle');
+Route::get('/detalle/{id}', 'PagesController@detalle')->name('notas.detalle');
 ```
 
 3. Crear función en controlador:
@@ -200,3 +209,71 @@ public function detalle($id){
     <h4>Descripción: {{ $nota->descripcion }}</h4>
 @endsection
 ```
+
+## Agregar datos
+Para agregar nuevos elementos debemos realizar los mismos procedimientos, agregar una vista, una ruta y un controlador.
+
+#### Vista
+Agregaremos el formulario para insertar nuevos datos:
+
+```html
+<form method="POST" action="{{ route('notas.crear') }}">
+    @csrf
+    <input type="text" name="nombre" placeholder="Nombre" class="form-control mb-2">
+    <input type="text" name="descripcion" placeholder="Descripcion" class="form-control mb-2">
+    <button class="btn btn-primary btn-block" type="submit">Agregar</button>
+</form>
+```
+No olives utilizar el atributo name en cada uno de tus input, este debe ser el mismo campo de su base de datos. Por otro lado configuramos el método POST y la acción debe llamar a una nueva ruta.
+
+**Protección CSRF:** Laravel facilita la protección de su aplicación de los ataques de falsificación de solicitudes entre sitios (CSRF). Las falsificaciones de solicitudes entre sitios son un tipo de explotación maliciosa en la que se realizan comandos no autorizados en nombre de un usuario autenticado.
+
+Laravel genera automáticamente un "token" CSRF para cada sesión de usuario activa gestionada por la aplicación. Este token se usa para verificar que el usuario autenticado es el que realiza las solicitudes a la aplicación.
+
+Por lo tanto simplemente tenemos que agregar `@csrf` directiva Blade para generar el campo de token.
+
+[Guía oficial de CSRF Laravel 5.8](https://laravel.com/docs/5.8/csrf)
+
+#### Rutas
+Aquí veremos un nuevo método en las rutas:
+```php
+Route::post('/', 'PagesController@crear')->name('notas.crear');
+```
+
+#### Controlador
+Aquí realizaremos toda la acción para guardar en la base de datos, utilizando el modelo `Nota` y `Request $request`, este último lo pasamos como parámetro para recibir los datos de nuestro formulario. Con Eloquent solo llamamos a la función `save()` para almacenar en nuestra base de datos.
+
+```php
+
+class PagesController extends Controller
+{
+    public function crear(Request $request){
+        // return $request->all();
+
+        $notaNueva = new App\Nota;
+        $notaNueva->nombre = $request->nombre;
+        $notaNueva->descripcion = $request->descripcion;
+
+        $notaNueva->save();
+
+        return back()->with('mensaje', 'Nota agregada');
+    }
+}
+```
+**Request $request**: Para obtener una instancia de la solicitud HTTP actual a través de la inyección de dependencia, debe escribir la clase en el método de su controlador. La instancia de solicitud entrante será automáticamente inyectada por el contenedor de servicios: `Illuminate\Http\Request`
+
+[Request documentación Laravel 5.8](https://laravel.com/docs/5.8/requests)
+
+Una cosa interesante es utiliza `back()` para retroceder en la visa y `with()` para enviar un mensaje, este caso nota agregada que lo podríamos pintar con un alerta en nuestra vista:
+
+```php
+@if ( session('mensaje') )
+    <div class="alert alert-success">{{ session('mensaje') }}</div>
+@endif
+```
+
+[Redireccionamiento con datos](https://laravel.com/docs/5.8/redirects#redirecting-with-flashed-session-data)
+
+Si bien nuestra aplicación web guarda los datos nos falta un paso muy importante que son las validaciones.
+
+## Validaciones
