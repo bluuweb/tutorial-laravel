@@ -152,9 +152,9 @@ En la vista podemos realizar un ciclo foreach para pintar nuestros datos:
 ```
 
 ## Leer un dato
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=z7ecV0tL1Gg
+<!-- <a href="http://www.youtube.com/watch?feature=player_embedded&v=z7ecV0tL1Gg
 " target="_blank"><img src="http://img.youtube.com/vi/z7ecV0tL1Gg/0.jpg" 
-alt="Tutorrial bluuweb" width="240" height="180" border="" /></a>
+alt="Tutorrial bluuweb" width="240" height="180" border="" /></a> -->
 
 Para traer la información de un solo dato de nuestra base de datos, debemos realizar lo siguiente:
 
@@ -277,3 +277,37 @@ Una cosa interesante es utiliza `back()` para retroceder en la visa y `with()` p
 Si bien nuestra aplicación web guarda los datos nos falta un paso muy importante que son las validaciones.
 
 ## Validaciones
+Laravel proporciona varios enfoques diferentes para validar los datos entrantes de su aplicación. En el controlador volveremos a utilizar la variable `$request` donde pasamos `validate`, el cual recibe el nombre de nuestro campo con su respectiva validación.
+
+```php
+$request->validate([
+    'nombre' => 'required',
+    'descripcion' => 'required'
+]);
+```
+
+[Documentación ofical Laravel 5.8](https://laravel.com/docs/5.8/validation#introduction)
+
+En caso de detectar algún error laravel redireccionará automáticamente al usuario a su ubicación anterior. Además, todos los errores de validación se transmitirán automáticamente a la sesión, por lo tanto podríamos pintarlos en la vista de la siguiente manera:
+
+```html
+@error('nombre')
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        El nombre es requerido
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>  
+@enderror
+
+@if ($errors->has('descripcion'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        La descripción es requerida
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+```
+
+Aquí vemos dos ejemplos, el primero es utilizando la directiva `@error` y el segundo es utilizando la variable `$errors`, cualquiera de los dos métodos son válidos.
