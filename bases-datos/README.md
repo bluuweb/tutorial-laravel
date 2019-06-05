@@ -444,3 +444,31 @@ public function update(Request $request, $id){
 }
 ```
 Utilizamos nuevamente el `$request` para recibir los datos de nuestro formulario y buscamos en nuestra base de datos con el `$id` en específico. Finalmente estamos retornando a la página anterior con un mensaje de sesión `Nota editada`.
+
+## Eliminar
+Para eliminar una nota de nuestra base de datos es muy sencillo, solo debemos crear un formulario con nuestro botón de eliminar, configurar nuestra ruta y el controlador que ejecutará la acción:
+
+Vista:
+```html
+<form action="{{ route('notas.eliminar', $item) }}" class="d-inline" method="POST">
+    @method('DELETE')
+    @csrf
+    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+</form> 
+```
+
+Ruta:
+```php
+Route::delete('/eliminar/{id}', 'PagesController@eliminar')->name('notas.eliminar');
+```
+
+Controlador:
+```php
+public function eliminar($id){
+
+    $notaEliminar = App\Nota::findOrFail($id);
+    $notaEliminar->delete();
+
+    return back()->with('mensaje', 'Nota Eliminada');
+}
+```
