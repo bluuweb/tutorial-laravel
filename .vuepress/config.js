@@ -16,7 +16,8 @@ module.exports = {
     sidebar:{
       '/':[
         '',
-        '/bases-datos/'
+        '/bases-datos/',
+        '/trucos/'
       ]
     }
   }
