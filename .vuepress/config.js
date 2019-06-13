@@ -16,8 +16,8 @@ module.exports = {
     sidebar:[
         '/',
         '/bases-datos/',
+        '/auth/',
         '/trucos/',
-        '/auth/'
       ]
   }
  
