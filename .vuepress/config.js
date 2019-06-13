@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Laravel',
   description: 'Aprende a utilizar Laravel en tus proyectos web',
-  base: '/tutorial-laravel',
+  base: '/tutorial-laravel/',
   locales:{
     '/':{
       lang: 'es-ES'
@@ -13,13 +13,12 @@ module.exports = {
       // { text: 'Guia', link: '/docs/' },
       { text: 'Youtube', link: 'https://youtube.com/bluuweb' },
     ],
-    sidebar:{
-      '/':[
+    sidebar:[
         '/',
         '/bases-datos/',
-        '/trucos/'
+        '/trucos/',
+        '/auth/'
       ]
-    }
   }
  
 }
