@@ -87,3 +87,149 @@ Aquí una tabla con todas las rutas y acciones configuradas automáticamente:
 | GET       | `/notas/{nota}/edit` | edit    |  notas.edit    |
 | PUT/PATCH | `/notas/{nota}`      | update  |  notas.update  |
 | DELETE    | `/notas/{nota}`      | destroy |  notas.destroy |
+
+## Proteger rutas
+Para que cada ruta antes señalada esté protegida por Auth debemos agregar la siguiente línea de comandos a `NotaController`
+
+```php
+public function __construct()
+{
+    $this->middleware('auth');
+}
+```
+Así al momento de montar nuestro controlador se utilizará el middleware auth.
+
+## Leer Notas (index)
+Aquí guardaremos en una variable al usuario que esté identificado, además de hacer nuestra consulta a la base de datos y pintar la siguiente vista:
+
+Como utilizaremos el modelo Nota es fundamental agregar lo siguiente al inicio de nuestro controlador:
+```php
+use App\Nota;
+```
+Luego definir la acción index:
+```php
+public function index()
+{
+    $usuarioEmail = auth()->user()->email;
+    $notas = Nota::where('usuario', $usuarioEmail)->paginate(5);
+    return view('notas.lista',compact('notas'));
+}
+```
+
+### Vista notas.lista
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Lista de Notas para {{auth()->user()->name}}</span>
+                    <a href="/notas/create" class="btn btn-primary btn-sm">Nueva Nota</a>
+                </div>
+
+                <div class="card-body">      
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($notas as $item)
+                            <tr>
+                                <th scope="row">{{ $item->id }}</th>
+                                <td>{{ $item->nombre }}</td>
+                                <td>{{ $item->descripcion }}</td>
+                                <td>Acción</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    {{$notas->links()}}
+                {{-- fin card body --}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+```
+Estamos reutilizando el layout y secciones que se crearon automáticamente con la autenticación. Además de pintar al usuario autenticado con sus notas en específico.
+
+Hemos creado el botón de crear notas:
+```html
+<a href="/notas/create" class="btn btn-primary btn-sm">Nueva Nota</a>
+```
+
+## Crear Nota (create/store)
+Vamos a utilizar dos funciones de nuestro controlador `create` y `store`:
+```php
+public function create()
+{
+    return view('notas.crear');
+}
+```
+Esta solo retornará la vista notas.crear
+
+### Vista notas.crear
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Agregar Nota</span>
+                    <a href="/notas" class="btn btn-primary btn-sm">Volver a lista de notas...</a>
+                </div>
+                <div class="card-body">     
+                  @if ( session('mensaje') )
+                    <div class="alert alert-success">{{ session('mensaje') }}</div>
+                  @endif
+                  <form method="POST" action="/notas">
+                    @csrf
+                    <input
+                      type="text"
+                      name="nombre"
+                      placeholder="Nombre"
+                      class="form-control mb-2"
+                    />
+                    <input
+                      type="text"
+                      name="descripcion"
+                      placeholder="Descripcion"
+                      class="form-control mb-2"
+                    />
+                    <button class="btn btn-primary btn-block" type="submit">Agregar</button>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+```
+Y en nuestro controlador:
+
+```php
+public function store(Request $request)
+{
+
+    $nota = new Nota();
+    $nota->nombre = $request->nombre;
+    $nota->descripcion = $request->descripcion;
+    $nota->usuario = auth()->user()->email;
+    $nota->save();
+
+    return back()->with('mensaje', 'Nota Agregada!');
+}
+```
+La única diferencia con nuestro proyecto anterior es que utilizamos la columna `usuario` para filtrar las notas para cada cliente. Por lo tanto queda como tarea resolver las siguientes acciones del CRUD.
