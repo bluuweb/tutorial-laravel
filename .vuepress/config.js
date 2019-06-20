@@ -17,6 +17,7 @@ module.exports = {
         '/',
         '/bases-datos/',
         '/auth/',
+        '/vue/',
         '/trucos/',
       ]
   }
