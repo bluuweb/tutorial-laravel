@@ -19,6 +19,7 @@ module.exports = {
         '/auth/',
         '/vue/',
         '/trucos/',
+        '/api-db-relacionales/',
       ]
   }
  
