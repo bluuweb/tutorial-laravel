@@ -1,4 +1,4 @@
-# API - DB Relacionales
+# DB Relacionales
 Este es el primer capítulo de nuestra primera API REST con Laravel 5.8, donde iremos diseñando nuestra base de datos con campos relacionales.
 
 1. Crear proyecto con Laravel 5.8 o superior
@@ -7,16 +7,15 @@ Este es el primer capítulo de nuestra primera API REST con Laravel 5.8, donde i
 ## Diseño DB
 Generalmente para un blog tendremos las siguientes tablas con los siguientes campos:
 
-|USUARIOS           |POST       |CATEGORIES   |
-|--------           |----       |----         |
-|id                 |id         |id           |
-|name               |user_id    |name         |
-|role               |category_id|created_at   |
-|email              |title      |updated_at   |
-|email_verified_at  |content    |
-|password           |image      |
-|created_at         |created_at |
-|updated_at         |updated_at |
+|USUARIOS           |POST       |CATEGORIES   | TAG         |PIVOTE     |
+|--------           |----       |----         |----         |----       |
+|id                 |id         |id           |id           |id         |
+|name               |title      |name         |name         |post_id    |
+|email              |excerpt    |created_at   |created_at   |tag_id     |
+|email_verified_at  |body       |updated_at   |updated_at   |created_at |
+|password           |created_at |             |             |updated_at |
+|created_at         |updated_at |
+|updated_at         |
 |remember_token     |
 
 ## Crear base de datos
@@ -289,5 +288,67 @@ class PostsTableSeeder extends Seeder
 }
 
 ```
+
+## Práctica
+Ahora vamos a utilizar estas relaciones, primero en en las rutas nos podemos traer todos los posts:
+
+```php
+Route::get('/', function () {
+    $posts = Post::all();
+    return view('welcome', compact('posts'));
+});
+```
+
+Ahora en el modelo Post debemos configurar las fechas con Carbon:
+```php
+protected $dates = ['published_at']; // pasar fechas a carbon
+```
+
+Y finalmente configuramos la vista welcome.blade.php:
+```html
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            @foreach ($posts as $item)
+                <div class="card mb-3">
+                    <div class="card-header">{{$item->published_at->format('d M Y')}}</div>
+
+                    <div class="card-body">
+                        <h3>{{$item->title}}</h3>
+                        <p>Categoría: {{ $item->category->name }}</p>
+                        <p>{{ $item->excerpt }}</p>
+                        <div>
+
+                            @foreach ($item->tags as $tag)
+                            <span class="badge badge-primary"># {{ $tag->name }}</span>
+                            @endforeach
+
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+
+
+
 
 
