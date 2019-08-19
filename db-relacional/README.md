@@ -204,9 +204,9 @@ class LibrosTableSeeder extends Seeder
         Libro::truncate(); // Evita duplicar datos
 
         $libro = new Libro();
-        $libro->title = "Mi primer libro";
-        $libro->excerpt = "Extracto de mi primer libro";
-        $libro->body = "<p>Resumen de mi primer libro</p>";
+        $libro->titulo = "Mi primer libro";
+        $libro->descripcion = "Extracto de mi primer libro";
+        $libro->contenido = "<p>Resumen de mi primer libro</p>";
         $libro->fecha = Carbon::now();
         $libro->categoria_id = 1;
         $libro->save();
@@ -214,9 +214,9 @@ class LibrosTableSeeder extends Seeder
         $libro->etiquetas()->attach([1, 2]); //Relacionar el libro a dos etiquetas
         
         $libro = new Libro();
-        $libro->title = "Mi segundo libro";
-        $libro->excerpt = "Extracto de mi segundo libro";
-        $libro->body = "<p>Resumen de mi segundo libro</p>";
+        $libro->titulo = "Mi segundo libro";
+        $libro->descripcion = "Extracto de mi segundo libro";
+        $libro->contenidocontenido = "<p>Resumen de mi segundo libro</p>";
         $libro->fecha = Carbon::now();
         $libro->categoria_id = 1;
         $libro->save();
@@ -224,9 +224,9 @@ class LibrosTableSeeder extends Seeder
         $libro->etiquetas()->attach([1]); //Relacionar el libro a una etiqueta
 
         $libro = new Libro();
-        $libro->title = "Mi tercer libro";
-        $libro->excerpt = "Extracto de mi tercer libro";
-        $libro->body = "<p>Resumen de mi tercer libro</p>";
+        $libro->titulo = "Mi tercer libro";
+        $libro->descripcion = "Extracto de mi tercer libro";
+        $libro->contenido = "<p>Resumen de mi tercer libro</p>";
         $libro->fecha = Carbon::now();
         $libro->categoria_id = 1;
         $libro->save();
