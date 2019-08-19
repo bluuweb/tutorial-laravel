@@ -216,7 +216,7 @@ class LibrosTableSeeder extends Seeder
         $libro = new Libro();
         $libro->titulo = "Mi segundo libro";
         $libro->descripcion = "Extracto de mi segundo libro";
-        $libro->contenidocontenido = "<p>Resumen de mi segundo libro</p>";
+        $libro->contenido = "<p>Resumen de mi segundo libro</p>";
         $libro->fecha = Carbon::now();
         $libro->categoria_id = 1;
         $libro->save();
