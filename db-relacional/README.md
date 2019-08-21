@@ -381,5 +381,5 @@ Si presentan algún error lo recomendable es eliminar la base de datos (desde Ph
 
 El diseño debería quedar así:
 <br>
-<img :src="$withBase('/img/relaciones-1.png')" alt="relaciones base de datos" width="100%">
+<img :src="$withBase('/img/relaciones-1.PNG')" alt="relaciones base de datos" width="100%">
 
