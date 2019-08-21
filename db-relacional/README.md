@@ -238,11 +238,11 @@ class LibrosTableSeeder extends Seeder
 ```
 
 Ejecutar en terminal: 
-``php artisan migrate:refresh``
+``php artisan migrate:fresh``
 
 ``php artisan db:seed``
 
-Para ejecutar una migración y seed puedes utilizar: ``php atisan migrate:refresh --seed``
+Para ejecutar una migración y seed puedes utilizar: ``php artisan migrate:fresh --seed``
 
 ## Pruebas en vistas
 Veamos si las relaciones están bien configuradas:
@@ -304,3 +304,82 @@ Y finalmente configuramos la vista welcome.blade.php:
 </div>
 @endsection
 ```
+
+## Restricciones Base de datos
+Podemos definir restricciones a nivel de bases de datos (sus relaciones), pero para este procedimiento debemos modificar la migración de categorias, libros y la tabla pivote.
+
+**En la migración de libros**: anteponemos la creación de categorías, ya que en caso contrario no encontrará la clave foránea. 
+
+:::danger Eliminar migración categorías
+Debemos eliminiar la migración de categorías, antes de ejecutar nuevamente `php artisan migrate:fresh`
+:::
+
+```php{4-8,16-17}
+public function up()
+    {
+
+        Schema::create('categorias', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nombre');
+            $table->timestamps();
+        });
+
+        Schema::create('libros', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('titulo');
+            $table->mediumText('descripcion');
+            $table->text('contenido');
+            $table->timestamp('fecha')->nullable();
+            $table->unsignedBigInteger('categoria_id'); // Relación con categorias
+            $table->foreign('categoria_id')->references('id')->on('categorias'); // clave foranea
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('libros');
+        Schema::dropIfExists('categorias');
+    }
+```
+
+En la migración de nuestra tabla pivote:
+```php{5-8}
+public function up()
+    {
+        Schema::create('etiqueta_libro', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('libro_id'); // Relación con libros
+            $table->foreign('libro_id')->references('id')->on('libros'); // clave foranea
+            $table->unsignedBigInteger('etiqueta_id'); // Relación con etiquetas
+            $table->foreign('etiqueta_id')->references('id')->on('etiquetas'); // clave foranea
+            $table->timestamps();
+        });
+    }
+```
+
+Finalmente en nuestro seeder: Dejar comentado los `truncate()`
+```php
+// Categoria::truncate(); // Evita duplicar datos
+// Etiqueta::truncate(); // Evita duplicar datos
+// Libro::truncate(); // Evita duplicar datos
+```
+
+Ahora ejecutar nuevamente las migraciones:
+```
+php artisan migrate:fresh --seed
+```
+
+:::tip En caso de algún error
+Si presentan algún error lo recomendable es eliminar la base de datos (desde PhpMyAdmin) y ejecutar nuevamente las migraciones con sus respectivos seeder.
+:::
+
+El diseño debería quedar así:
+<br>
+<img :src="$withBase('/img/relaciones-1.png')" alt="relaciones base de datos" width="100%">
+
