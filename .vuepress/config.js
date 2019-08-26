@@ -20,6 +20,7 @@ module.exports = {
         '/vue/',
         '/trucos/',
         '/db-relacional/',
+        '/factorias/',
       ]
   }
  
