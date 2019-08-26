@@ -120,6 +120,11 @@ public function up()
 ## Tabla Pivote (solo migración)
 [Documentación migraciones](https://laravel.com/docs/5.8/migrations#generating-migrations)
 Para hacer la relación entre Etiquetas y Libros vamos a crear una tabla pivote:
+
+:::tip Importante
+El nombre `create_etiqueta_libro_table` no es al azar, tiene que ir de orden alfabético y en singular, es por esto que colocamos primero `etiqueta` y luego `libro`
+:::
+
 ```
 php artisan make:migration create_etiqueta_libro_table --create=etiqueta_libro
 ```
@@ -382,4 +387,5 @@ Si presentan algún error lo recomendable es eliminar la base de datos (desde Ph
 El diseño debería quedar así:
 <br>
 <img :src="$withBase('/img/relaciones-1.PNG')" alt="relaciones base de datos" width="100%">
+
 
