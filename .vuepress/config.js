@@ -21,6 +21,7 @@ module.exports = {
         '/trucos/',
         '/db-relacional/',
         '/factorias/',
+        '/api-rest/'
       ]
   }
  
